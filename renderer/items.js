@@ -10,6 +10,47 @@ fs.readFile(`${__dirname}/reader.js`, (err, data) => {
 // track items in storage
 exports.storage = JSON.parse(localStorage.getItem('readit-items')) || []
 
+// listen to "Done" message from reader window
+window.addEventListener('message', e => {
+  // check for correct message
+  if (e.data.action === 'delete-reader-item') {
+    // delete item at given index
+    this.delete(e.data.itemIndex)
+
+    // close reader window
+    e.source.close()
+  }
+})
+
+// delete item
+exports.delete = index => {
+  // remove item from DOM
+  items.removeChild(items.childNodes[index])
+
+  // remove from storage
+  this.storage.splice(index, 1)
+
+  // persist
+  this.save()
+
+  // select prev or next item
+  if (this.storage.length) {
+    const newSelectedItemIndex = index === 0 ? 0 : index - 1
+    document.getElementsByClassName('read-item')[newSelectedItemIndex].classList.add('selected')
+  }
+}
+
+// get selected item index
+exports.getSelectedItem = () => {
+  const currentItem = document.getElementsByClassName('read-item selected')[0]
+  let itemIndex = 0
+  let child = currentItem
+  while((child = child.previousSibling) != null) {
+    itemIndex++
+  }
+  return { node: currentItem, index: itemIndex }
+}
+
 // persist storage
 exports.save = () => {
   localStorage.setItem('readit-items', JSON.stringify(this.storage))
@@ -17,7 +58,7 @@ exports.save = () => {
 
 // set item as selected
 exports.select = e => {
-  const prevSelected = document.getElementsByClassName('read-item selected')[0]
+  const prevSelected = this.getSelectedItem().node
   if (prevSelected) {
     prevSelected.classList.remove('selected')
   }
@@ -26,7 +67,7 @@ exports.select = e => {
 
 // move to newly selected item
 exports.changeSelection = direction => {
-  const currentItem = document.getElementsByClassName('read-item selected')[0]
+  const currentItem = this.getSelectedItem().node
 
   // handle up/down
   if (direction === 'ArrowUp' && currentItem && 
@@ -47,8 +88,8 @@ exports.open = () => {
   // only if we have items (in case of menu open)
   if (!this.storage.length) return
 
-  const selectedItem = document.getElementsByClassName('read-item selected')[0]
-  const contentUrl = selectedItem.dataset.url
+  const selectedItem = this.getSelectedItem()
+  const contentUrl = selectedItem.node.dataset.url
   
   // open item in proxy BrowserWindow
   const readerWin = window.open(contentUrl, '', `
@@ -61,8 +102,8 @@ exports.open = () => {
     contextIsolation=1
   `)
 
-  // inject javascript
-  readerWin.eval(readerJS)
+  // inject javascript with specific item index (selectedItem.index)
+  readerWin.eval(readerJS.replace('{{index}}', selectedItem.index))
 }
 
 // add new item
