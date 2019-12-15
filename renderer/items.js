@@ -1,5 +1,7 @@
-const items = document.getElementById('items')
+const { shell } = require('electron')
 const fs = require('fs')
+const items = document.getElementById('items')
+
 
 // get readerJS content
 let readerJS
@@ -104,6 +106,13 @@ exports.open = () => {
 
   // inject javascript with specific item index (selectedItem.index)
   readerWin.eval(readerJS.replace('{{index}}', selectedItem.index))
+}
+
+// open item in native browser
+exports.openNative = () => {
+  if (!this.storage.length) return
+  const selectedItem = this.getSelectedItem()
+  shell.openExternal(selectedItem.node.dataset.url)
 }
 
 // add new item

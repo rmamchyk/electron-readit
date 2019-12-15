@@ -8,6 +8,28 @@ const showModal = document.getElementById('show-modal'),
       itemUrl = document.getElementById('url'),
       search = document.getElementById('search')
 
+// global function to open new item modal from menu
+window.newItem = () => {
+  showModal.click()
+}
+
+// global function to read selected item
+window.openItem = items.open
+
+// global function to delete item
+window.deleteItem = () => {
+  const selectedItem = items.getSelectedItem()
+  items.delete(selectedItem.index)
+}
+
+// global function to open item in native browser
+window.openItemNative = items.openNative
+
+// global function to search items
+window.searchItems = () => {
+  search.focus()
+}
+
 // filter items with 'search' input
 search.addEventListener('keyup', e => {
   // loop items
