@@ -9,7 +9,7 @@ function createWindow () {
     webPreferences: { nodeIntegration: true }
   })
 
-  mainWindow.loadFile('index.html')
+  mainWindow.loadFile('renderer/main.html')
   // mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed',  () => {
