@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron')
+const items = require('./items')
 
 const showModal = document.getElementById('show-modal'),
       closeModal = document.getElementById('close-modal'),
@@ -48,7 +49,9 @@ itemUrl.addEventListener('keyup', e => {
 
 // listen for new item from main process
 ipcRenderer.on('new-item-success', (e, newItem) => {
-  console.log(newItem)
+  // add new item to items list
+  items.addItem(newItem, true)
+
   toggleModalButtons()
   itemUrl.value = ''
   modal.style.display = 'none'
