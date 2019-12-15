@@ -1,4 +1,11 @@
 const items = document.getElementById('items')
+const fs = require('fs')
+
+// get readerJS content
+let readerJS
+fs.readFile(`${__dirname}/reader.js`, (err, data) => {
+  readerJS = data.toString()
+})
 
 // track items in storage
 exports.storage = JSON.parse(localStorage.getItem('readit-items')) || []
@@ -42,7 +49,20 @@ exports.open = () => {
 
   const selectedItem = document.getElementsByClassName('read-item selected')[0]
   const contentUrl = selectedItem.dataset.url
-  console.log(contentUrl)
+  
+  // open item in proxy BrowserWindow
+  const readerWin = window.open(contentUrl, '', `
+    maxWidth=2000,
+    maxHeight=2000,
+    width=1200,
+    height=800,
+    backgroundColor=#dedede,
+    nodeIntegration=0,
+    contextIsolation=1
+  `)
+
+  // inject javascript
+  readerWin.eval(readerJS)
 }
 
 // add new item
