@@ -7,7 +7,23 @@
     <link rel="stylesheet" href="main.css">
   </head>
   <body>
-    <h1>Hello World!</h1>
+    <header>
+      <button id="show-modal">+</button>
+      <input id="search" type="text" placeholder="Search">
+    </header>
+
+    <main>
+      <p id="no-items">No Items</p>
+      <div id="items">
+
+      </div>
+    </main>
+
+    <div id="modal">
+      <input id="url" type="text" placeholder="Enter URL">
+      <button id="add-item">Add Item</button>
+      <button id="close-modal">Cancel</button>
+    </div>
 
     <script>
       require('./app.js')
