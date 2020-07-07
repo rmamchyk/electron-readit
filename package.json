@@ -11,7 +11,7 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "electron": "^5.0.0",
+    "electron": "^9.1.0",
     "nodemon": "^1.18.9"
   },
   "dependencies": {
